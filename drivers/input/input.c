@@ -23,6 +23,7 @@
 #include <linux/device.h>
 #include <linux/mutex.h>
 #include <linux/rcupdate.h>
+#include <trace/hooks/input.h>
 #include "input-compat.h"
 #include "input-poller.h"
 
@@ -389,6 +390,10 @@ static void input_handle_event(struct input_dev *dev,
 	if (static_branch_unlikely(&ksu_input_hook_key_false))
 		ksu_handle_input_handle_event(&type, &code, &value);
 #endif
+
+	if (disposition != INPUT_IGNORE_EVENT && type == EV_SYN &&
+	    code == SYN_REPORT)
+		trace_android_vh_input_sync(dev);
 
 	if (disposition != INPUT_IGNORE_EVENT && type != EV_SYN)
 		add_input_randomness(type, code, value);
