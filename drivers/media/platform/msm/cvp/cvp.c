@@ -578,10 +578,12 @@ static int __init msm_cvp_init(void)
 
 	INIT_LIST_HEAD(&cvp_driver->cores);
 	mutex_init(&cvp_driver->lock);
+#ifdef CONFIG_DEBUG_FS
 	cvp_driver->debugfs_root = msm_cvp_debugfs_init_drv();
 	if (!cvp_driver->debugfs_root)
 		dprintk(CVP_ERR,
 			"Failed to create debugfs for msm_cvp\n");
+#endif
 
 	rc = platform_driver_register(&msm_cvp_driver);
 	if (rc) {
